@@ -18,7 +18,7 @@ except OSError:
     pass
 
 # Preparing regex for youtube ID
-idReg = re.compile("\?v=(.+)")
+idReg = re.compile("(\?v=(?P<watch>.+))|(/embed/(?P<embed>.+))")
 
 # Reading links file and converting each link
 # Links file = one link per line
@@ -31,7 +31,10 @@ for linkfile in linkFiles:
         if youtubeID == None:
             print("Invalid Youtube Link (no ID, i.e. no ?v=...)")
             continue
-        downloadLink = "https://youtube.com/watch"+youtubeID.group(0)
+        if youtubeID.group('watch') != None:
+            downloadLink = "https://youtube.com/watch?v="+youtubeID.group('watch')
+        elif youtubeID.group('embed') != None:
+            downloadLink = "https://youtube.com/watch?v="+youtubeID.group('embed')
         print("Attempting to download "+str(downloadLink))
         #downloading and converting file via external program
         os.system("youtube-dl.exe --prefer-ffmpeg --extract-audio --audio-format mp3 "+downloadLink)
